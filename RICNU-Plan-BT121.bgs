@@ -1,0 +1,68 @@
+#-----------------------------------------------------------
+#		RICNU knee Bluetooth Server BGScript Source File
+#-----------------------------------------------------------
+#		Author: 	Alexey Revinski
+#		Created:	07/13/2017
+#-----------------------------------------------------------
+
+# Constants
+const UART = 0												# Enumeration value of SPI1 peripheral endpoint
+const DROP = 31												# Enumeration value of DROP endpoint
+
+# Variables
+dim serialep												# Endpoint variable
+dim result													# Function result variable
+
+# Procedure: wait for client to initiate connection
+procedure le_serial_wait_for_connection()
+    call le_serial_listen(ricnu_data,DROP)(result,serialep)	# Wait for incoming connection request
+	if (result!=0)											# If failed
+		serialep = -1										# Set endpoint variable to error value
+	end if
+end
+
+# Procedure: start LE advertising
+procedure le_advertise()
+    call sm_delete_bondings()								# Forget bonded devices (TODO)
+    call le_gap_set_mode(2,2)(result)						# Make server general discoverable and undirected connectable
+end
+
+# Called when cable replacement connection opens
+event le_serial_opened(endpoint)
+    if (endpoint=serialep)									# If endpoint is the one we opened		
+        call endpoint_set_streaming_destination(UART,serialep)(result)	# Connect SPI1 endpoint to cable replacement
+        call endpoint_set_streaming_destination(serialep,UART)(result)	# Connect cable replacement endpoint to SPI1
+    end if
+end
+
+# Called when cable replacement connection is closed
+event endpoint_closing(reason,endpoint)
+    if (endpoint=serialep)									# If endpoint is the one we opened
+        call endpoint_close(serialep)						# Clean up cable replacement connection
+        serialep=-1											# Set endpoint variable to error value
+        call endpoint_set_streaming_destination(UART,DROP)	# Drop incoming SPI data while unconnected
+        call le_serial_wait_for_connection()				# Wait for client to initiate another connection
+    end if
+end
+
+# Called when LE connection is closed/lost
+event le_connection_closed(reason,connection)
+    call le_advertise()										# Advertise again
+end
+
+# Called on system boot
+event system_boot(major,minor,patch,build,bootloader,hw)
+    serialep=-1												# Set endpoint variable to error value
+
+end
+
+# Called on bluetooth radio initialization
+event system_initialized(address)
+    call sm_configure(0,3)									# Set security (TODO)
+    call sm_set_bondable_mode(1)							# Allow bonding
+    call le_gap_set_conn_parameters(6,6,0,100)				# min_interval,max_interval,latency,timeout
+    call gatt_set_max_mtu(50)								# Two full packets in one transmission (2*27-4=50)
+    call endpoint_set_streaming_destination(UART,DROP)		# Drop incoming SPI data while unconnected
+    call le_serial_wait_for_connection()					# Wait for client to initiate connection
+    call le_advertise()										# Advertise to the client
+end

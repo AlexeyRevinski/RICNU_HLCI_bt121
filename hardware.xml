@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--TODO
+	1. decide on a wakeup pin -->
+
+<hardware>
+
+	<!-- ADC is not used -->
+	<!--<adc></adc>-->
+	
+	<!-- Sleep modes enabled -->
+	<!--<sleep enabled="true"/> -->
+	<!--
+	<sleep enabled="false"/>
+	-->
+	
+	<!-- Wakeup pin is used TODO-->
+	<!--<wakeup_pin port="1" pin="12" state="up"/> -->
+	
+	
+	<!-- I/O configuration - default -->
+    <!-- <port index="0"  pulldown="0xFF" /> -->
+    <!-- <port index="1"  pulldown="0xFF" /> -->
+	
+	<!-- UART enabled @115200bps,no RTS/CTS, BGAPI not used - UART used for data-->
+	<uart baud="230400" flowcontrol="false" bgapi="false"/>
+	
+	<!-- SPI is not used -->
+	<!-- <spi/> -->
+	
+	<!-- I2C is not used -->
+	<!-- <i2c/> -->
+	
+	<!-- Hose wakeup pin is not used -->
+	<!-- <host_wakeup/> -->	
+	
+</hardware>
+

@@ -13,7 +13,7 @@ const DROP = 31												# Enumeration value of DROP endpoint
 dim serialep												# Endpoint variable
 dim result													# Function result variable
 
-# Procedure: wait for client to initiate connection
+# Procedure: create a server side LE cable replacement endpoint
 procedure le_serial_wait_for_connection()
     call le_serial_listen(ricnu_data,DROP)(result,serialep)	# Wait for incoming connection request
 	if (result!=0)											# If failed
@@ -29,9 +29,9 @@ end
 
 # Called when cable replacement connection opens
 event le_serial_opened(endpoint)
-    if (endpoint=serialep)									# If endpoint is the one we opened		
-        call endpoint_set_streaming_destination(UART,serialep)(result)	# Connect SPI1 endpoint to cable replacement
-        call endpoint_set_streaming_destination(serialep,UART)(result)	# Connect cable replacement endpoint to SPI1
+    if (endpoint=serialep)									# If opened endpoint is the one we want	
+        call endpoint_set_streaming_destination(UART,serialep)(result)	# Connect UART endpoint to cable replacement
+        call endpoint_set_streaming_destination(serialep,UART)(result)	# Connect cable replacement endpoint to UART
     end if
 end
 

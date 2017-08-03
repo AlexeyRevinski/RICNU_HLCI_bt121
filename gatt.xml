@@ -61,7 +61,7 @@
 							
         <description>RICNU Plan Data</description>
 
-        <properties write="true" indicate="true"/>
+        <properties write_no_response="true" notify="true"/>
 
         <value type="user"/>
 

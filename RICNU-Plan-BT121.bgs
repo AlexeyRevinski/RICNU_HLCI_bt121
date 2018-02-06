@@ -15,7 +15,7 @@ dim result													# Function result variable
 
 # Procedure: create a server side LE cable replacement endpoint
 procedure le_serial_wait_for_connection()
-    call le_serial_listen(ricnu_data,DROP)(result,serialep)	# Wait for incoming connection request
+    call le_serial_listen(ricnu_data,DROP)(result,serialep)		# Wait for incoming connection request
 	if (result!=0)											# If failed
 		serialep = -1										# Set endpoint variable to error value
 	end if

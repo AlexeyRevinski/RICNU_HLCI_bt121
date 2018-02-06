@@ -11,10 +11,10 @@
 
     <!-- BGScript source code file -->
     <scripting>
-        <script in="RICNU-Plan-BT121.bgs" />
+        <script in="ricnuplan.bgs" />
     </scripting>
 
     <!-- Firmware output file -->
-    <image out="RICNU-Plan-BT121.bin" />
+    <image out="ricnuplan.bin" />
 
 </project>
